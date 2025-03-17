@@ -554,11 +554,16 @@ class FilterCheck:
             return True
         elif self.config.get("min-count") is not None and count >= self.config["min-count"]:
             return True
+        expected_key = "count" if "count" in self.config else "min-count"
+        expected_value = self.config[expected_key]
+
         if "comment" in self.config:
-            raise TestError("%s: expected %d, got %d" % (
-                self.config["comment"], self.config["count"], count))
-        raise TestError("expected %d matches; got %d for filter %s" % (
-            self.config["count"], count, str(self.config)))
+            raise TestError("%s: expected %s = %d, got %d" % (
+                self.config["comment"], expected_key, expected_value, count))
+
+        raise TestError("expected %s = %d matches; got %d for filter %s" % (
+            expected_key, expected_value, count, str(self.config)))
+
 
     def match(self, event):
         for key, expected in self.config["match"].items():
