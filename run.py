@@ -550,7 +550,9 @@ class FilterCheck:
                 event = json.loads(line)
                 if self.match(event):
                     count += 1
-        if count == self.config["count"]:
+        if "count" in self.config and count == self.config["count"]:
+            return True
+        elif self.config.get("min-count") is not None and count >= self.config["min-count"]:
             return True
         if "comment" in self.config:
             raise TestError("%s: expected %d, got %d" % (
